@@ -1,5 +1,5 @@
 const countdownElement = document.getElementById('countdown')
-const targetDate = new Date('2025-06-12T19:00:00')
+const targetDate = new Date('2025-06-12T21:00:00')
 
 // Keep track of previous values
 let prevValues = {
@@ -91,15 +91,28 @@ function updateCountdown() {
   const diff = targetDate - now
 
   if (diff <= 0) {
-    countdownElement.innerHTML = `
-      <div class="timer-group">
-        <div class="timer-number-container">
-          <div class="timer-number-simple">🎤</div>
-        </div>
-        <div class="timer-unit">עכשיו מתחילה ההופעה!</div>
-      </div>`
-    clearInterval(interval)
-    return
+    clearInterval(interval);
+    // Add flash effect before redirect
+    const flash = document.createElement('div');
+    flash.style.position = 'fixed';
+    flash.style.top = '0';
+    flash.style.left = '0';
+    flash.style.width = '100%';
+    flash.style.height = '100%';
+    flash.style.background = 'white';
+    flash.style.opacity = '1';
+    flash.style.transition = 'opacity 0.5s ease-out';
+    flash.style.zIndex = '9999';
+    document.body.appendChild(flash);
+    
+    // Fade out flash and redirect
+    setTimeout(() => {
+      flash.style.opacity = '0';
+      setTimeout(() => {
+        window.location.href = 'celebration.html';
+      }, 500);
+    }, 100);
+    return;
   }
 
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
