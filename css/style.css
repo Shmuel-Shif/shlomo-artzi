@@ -1,0 +1,418 @@
+/* Reset and base styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  direction: rtl;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  height: 100vh;
+  text-align: center;
+  color: #333;
+  position: relative;
+  box-sizing: border-box;
+  background-color: black; /* למנוע קצוות לבנים */
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 100vh;
+  background: url('../image/back.jpg') center/cover no-repeat fixed;
+  filter: blur(15px) brightness(0.7);
+  transform: translate(-50%, -50%) scale(1.1);
+  z-index: -1;
+  pointer-events: none;
+}
+
+@media screen and (max-width: 768px) {
+  body::before {
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+
+  body {
+    padding: 7px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  body::before {
+    transform: translate(-50%, -50%) scale(1.3);
+  }
+}
+
+@keyframes gradient-animation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+h1 {
+  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  font-weight: 700;
+    background: linear-gradient(90deg, #66a6ff, #89f7fe);
+  -webkit-background-clip: text;  /* לחיתוך הרקע בתוך הטקסט */
+  -webkit-text-fill-color: transparent; /* לעשות את הטקסט שקוף כדי להראות את הרקע */
+  background-clip: text; /* תמיכה ב-Firefox */
+  text-fill-color: transparent;
+  margin: 0 0 1rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  position: relative;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #66a6ff, #89f7fe);
+  margin: 10px auto 0;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+h1:hover::after {
+  width: 120px;
+}
+
+/* Timer Layout */
+.timer {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 15px;
+  background: #f8f9fa;
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.timer-number-container {
+  position: relative;
+  height: 80px;
+  perspective: 1000px;
+  margin: 5px 0;
+}
+
+/* Regular number display (for seconds) */
+.timer-number-simple {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3em;
+  font-weight: 700;
+  color: #2c3e50;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+}
+
+.timer-number-simple.changed {
+  animation: pulse 0.2s ease-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Flip animation (for days, hours, minutes) */
+.timer-number {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.timer-number.flip {
+  transform: rotateX(-180deg);
+}
+
+.timer-number-front,
+.timer-number-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3em;
+  font-weight: 700;
+  color: #2c3e50;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+}
+
+.timer-number-back {
+  transform: rotateX(180deg);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.timer-number.flip .timer-number-front {
+  box-shadow: 0 -3px 15px rgba(0,0,0,0.1);
+}
+
+.timer-number.flip .timer-number-back {
+  box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+}
+
+.timer-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 100px;
+  position: relative;
+  border-radius: 15px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Accent colors and hover effects */
+.timer-group:nth-child(1) {
+  border-top: 4px solid #e74c3c;
+}
+
+.timer-group:nth-child(2) {
+  border-top: 4px solid #3498db;
+}
+
+.timer-group:nth-child(3) {
+  border-top: 4px solid #2ecc71;
+}
+
+.timer-group:nth-child(4) {
+  border-top: 4px solid #f1c40f;
+}
+
+.timer-group:hover .timer-number-front,
+.timer-group:hover .timer-number-back,
+.timer-group:hover .timer-number-simple {
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+}
+
+.timer-unit {
+  font-size: 0.9em;
+  color: #7f8c8d;
+  text-align: center;
+  padding: 8px;
+  background: #f8f9fa;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.label {
+  font-size: 1.3rem;
+  margin-top: 15px;
+  color: #7f8c8d;
+  font-weight: 500;
+  letter-spacing: 1.2px;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+}
+
+.label:hover {
+  color: #2c3e50;
+  transform: scale(1.05);
+}
+
+.image-container {
+  margin-bottom: 20px;
+  width: clamp(120px, 30vw, 220px);
+  height: clamp(120px, 30vw, 220px);
+  border-radius: 50%;
+  overflow: hidden;
+  border: 8px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #66a6ff, #89f7fe) border-box;
+  box-shadow: 0 10px 25px rgba(102, 166, 255, 0.4);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  animation: spinGlow 10s linear infinite;
+  transition: box-shadow 0.5s ease;
+}
+
+@keyframes spinGlow {
+  0% {
+    filter: drop-shadow(0 0 20px #94896e);
+    transform: rotate(0deg);
+  }
+  100% {
+    filter: drop-shadow(0 0 30px #555342);
+    transform: rotate(360deg);
+  }
+}
+
+.image-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2) 0%, transparent 70%);
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.image-container:hover {
+  transform: scale(1.08) rotate(2deg);
+  box-shadow: 0 15px 35px rgba(102, 166, 255, 0.6);
+}
+
+.image-container:hover::before {
+  opacity: 1;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(0.1) contrast(1.1);
+  transition: all 0.5s ease;
+}
+
+.image-container:hover img {
+  filter: grayscale(0) contrast(1.15);
+  transform: scale(1.1);
+}
+
+/* Mobile Responsiveness */
+@media screen and (max-width: 768px) {
+  body {
+    padding: 15px;
+  }
+
+  .timer {
+    gap: 10px;
+    padding: 15px;
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .timer-number-container {
+    height: clamp(40px, 10vh, 60px);
+  }
+
+  .timer-number-front .number,
+  .timer-number-back .number,
+  .timer-number-simple,
+  .timer-number-front,
+  .timer-number-back {
+    font-size: clamp(1.8em, 5vw, 2.2em);
+  }
+
+  .timer-unit {
+    font-size: clamp(0.7em, 2vw, 0.9em);
+    padding: 4px;
+  }
+
+  .timer-group {
+    min-width: unset;
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  body {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    margin-bottom: 0.5rem;
+  }
+
+  .timer {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .timer-number-container {
+    height: clamp(35px, 8vh, 50px);
+  }
+
+  .timer-number-front .number,
+  .timer-number-back .number,
+  .timer-number-simple,
+  .timer-number-front,
+  .timer-number-back {
+    font-size: clamp(1.5em, 4vw, 2em);
+  }
+
+  .timer-unit {
+    font-size: clamp(0.6em, 1.8vw, 0.8em);
+    padding: 3px;
+  }
+
+  .image-container {
+    margin-bottom: 15px;
+    border-width: 6px;
+  }
+}
+
+@media screen and (max-height: 600px) {
+  body {
+    padding: 8px;
+  }
+
+  h1 {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    margin-bottom: 0.3rem;
+  }
+
+  .image-container {
+    margin-bottom: 10px;
+    width: clamp(80px, 20vw, 150px);
+    height: clamp(80px, 20vw, 150px);
+    border-width: 4px;
+  }
+
+  .timer {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .timer-number-container {
+    height: clamp(30px, 7vh, 40px);
+    margin: 2px 0;
+  }
+
+  .timer-number-front .number,
+  .timer-number-back .number,
+  .timer-number-simple,
+  .timer-number-front,
+  .timer-number-back {
+    font-size: clamp(1.2em, 3.5vw, 1.8em);
+  }
+
+  .timer-unit {
+    font-size: clamp(0.5em, 1.5vw, 0.7em);
+    padding: 2px;
+  }
+}
